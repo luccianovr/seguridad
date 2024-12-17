@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Project } from './entities/project.entity';
-import { Repository } from 'typeorm';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { RoleEnum } from 'src/usuario/enum/role.enum';
-import { NotFoundError } from 'rxjs';
+import { Repository } from 'typeorm';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
+import { Project } from './entities/project.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -18,7 +17,6 @@ export class ProjectsService {
     private readonly usuarioRepository: Repository<Usuario>
   ) { }
   async create(createProjectDto: CreateProjectDto, datosUsuario: any) {
-    console.log('dto: ', createProjectDto)
 
     const proyectoCreado = [];
 
@@ -28,14 +26,12 @@ export class ProjectsService {
           username: datosUsuario.username
         }
       })
-      console.log(usuarioAuth)
       //instanciar proyecto
       const proyectoEntity = new Project();
       proyectoEntity.description = createProjectDto.description;
       proyectoEntity.name = createProjectDto.name;
       proyectoEntity.usuario = usuarioAuth;
 
-      console.log('proyecto: ', proyectoEntity);
       //guardar entidad
       await this.projectRepository.save(proyectoEntity);
       proyectoCreado.push(proyectoEntity);
@@ -59,10 +55,6 @@ export class ProjectsService {
     await this.projectRepository.save(proyectoEntity);
     proyectoCreado.push(proyectoEntity);
     return proyectoCreado;
-  }
-
-  async findAll() {
-    return await this.projectRepository.find();
   }
 
   async findOne(datosUsuario: any) {

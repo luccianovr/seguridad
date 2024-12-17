@@ -11,10 +11,12 @@ export class UsuarioExistePipe implements PipeTransform {
   ) { }
   async transform(value: any, metadata: ArgumentMetadata) {
     const usuarioExistente = await this.usuarioRepository.exists({
-      where: {
-        username: value.username,
+      where: [{
+        username: value.username
+      }, {
         email: value.email
       }
+      ],
     });
     if (usuarioExistente) {
       throw new BadRequestException('Username y/o email utilizados')
